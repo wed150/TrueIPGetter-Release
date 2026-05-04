@@ -1,26 +1,103 @@
-# LeviLamina Mod Template
+# TrueIPGetter
 
-Mod Template for LeviLamina
+**解决内网穿透环境下的用户真实 IP 获取问题**
 
-## Usage
+`TrueIPGetter` 是一款专为 **LeviLamina**（BDS插件加载器）设计的原生插件（Native Plugin）。它旨在解决服务器在使用内网穿透（NAT）或反向代理时，无法正确获取连接用户真实公网 IP 的痛点。
 
-For detailed instructions, see the [LeviLamina Documentation](https://lamina.levimc.org/developer_guides/tutorials/create_your_first_mod/)
+## ✨ 核心特性
 
-1. Generate a new repository from this template
-2. Clone the new repository
-3. Change the mod name and the expected LeviLamina version in `xmake.lua`
-4. Add your code.
-5. Run `xmake f -y -p windows -a x64 -m release` in the root of the repository
-6. Run `xmake` to build the mod.
+*   **真实 IP 捕获**：智能识别并修正经过内网穿透（如 FRPC、Nginx、云函数等）后的连接 IP，告别 `127.0.0.1` 或内网网关 IP。
+*   **原生极致性能**：采用 LeviLamina 原生插件开发，底层 Hook 实现，多线程异步进行，性能损耗极低，不对服务器 TPS 造成任何压力。
+*   **模组高度兼容**：不仅自身能获取真实 IP，还会将修正后的 IP 写入，确保下游的其他网络模组（如反作弊、登录验证、领地插件等）也能获取到正确的客户端 IP。
+*   **灵活白名单机制**：支持管理员通过指令对特定玩家进行 IP 检测豁免，应对复杂的网络环境或个别玩家的特殊加速情况。
+*   **无需安装依赖**：不需要安装例如 `GMLIB` 的依赖，方便快捷
+*   **高安全性**：使用短时效JWT鉴权，防止玩家抓包，扰乱数据库
 
-After a successful build, you will find mod in `bin/`
 
-## Contributing
 
-Ask questions by creating an issue.
+## 🚀 快速安装
 
-PRs accepted.
+1.  前往 Releases 页面下载最新版本的 `TrueIPGetter` 插件文件夹。
+2.  将下载的 `.dll` 文件直接拖入服务器根目录下的 `plugins` 文件夹中。
+3.  **重启服务器**
+4.  首次启动成功后，插件会自动在根目录生成 `plugins/TrueIPGetter/config/config.json` 配置文件。
 
-## License
+## ⚙️ 配置文件详解 `config.json`
 
-CC0-1.0 © LeviMC(LiteLDev)
+插件的配置文件采用 JSON 格式。
+
+以下是各项核心参数的详细说明：
+
+
+**`"version": 1`**
+配置文件的版本号。由插件自动维护，请勿随意修改。
+
+
+**`"RamdomSecret": true`**
+密钥模式开关。
+*   当设置为 `true` 时，插件会在启动时生成一个随机密钥用于内部通信鉴权，安全性更高，**推荐使用此模式**。
+*   当设置为 `false` 时，插件将转而使用下方自定义的 `ModifiedSecret`。
+
+**`"ModifiedSecret": ""`**
+自定义鉴权密钥。
+*   仅在 `RamdomSecret` 设为 `false` 时生效。
+*   通常无需使用，直接使用默认的随机密钥`"RamdomSecret": true`即可。
+
+**`"ServerIP": "http://47.110.135.254"`**
+您的外部穿透服务器 IP 地址或绑定的域名。(需要有`http://`)
+*   这里需要填写公网可访问的IP地址(内网穿透商提供的IP)。
+
+**`"ServerPort": 8080`**
+外部穿透服务器的监听端口。
+*   该端口需要能被访问
+*   一般是您的 BDS 服务端的外网端口。(详见NatPort下的提示)
+
+**`"NatPort": 8080`**
+本地ip上报服务实际运行的端口。
+> 💡 **温馨提示：关于 `NatPort` 的端口选择**
+> *   **默认建议**：由于 LeviLamina 主要服务于 Minecraft 基岩版（Bedrock Edition），其默认的服务端口为 **`19132`**。因此，如果您没有修改过服务端默认配置，建议将 `NatPort` 直接设置为 `19132`。
+> *   **避免“端口打架”**：Minecraft 基岩版服务端主要使用 **UDP** 协议通信。但如果您的服务器在同时运行其他服务（例如在同一个端口上开启了基岩版**和** Java 版服务器，或者在此端口搭建了网站），可能会导致该端口的 **TCP** 协议被占用。
+> *   **如何解决冲突**：一旦发生 TCP 端口冲突，建议您为 `NatPort` 单独配置一个未被占用的端口（例如 `8080` 或 `25565`），并在您的内网穿透工具或反向代理中将端口映射到公网，并在配置文件中的 `ServerIP` 中填写该端口映射的公网端口。
+
+**`"IPQueryServer": "https://x.x.com"`**
+内置的 IP 查询接口地址。
+*   插件利用该接口发起请求以获取访客的真实 IP。安装模组时会自动配置好。
+> [Warning]
+> 
+> **一般情况下请勿改动此地址**，除非您**明确**知道自己在做什么
+
+
+### 💡 配置示例与理解
+
+假设您的网络拓扑如下：
+*   **本地服务**：Minecraft 基岩版服务器运行在 `127.0.0.1:8080`
+*   **公网映射**：使用了内网穿透工具，将本地的 8080 端口映射到了公网的 `111.451.191.180:60000`
+
+那么，为了让插件正确工作，您的 `config.json` 应调整为以下参数：
+*   `"ServerIP": "111.451.191.180"`
+*   `"ServerPort": 60000`
+*   `"NatPort": 8080`
+
+如果有端口冲突，请将 `NatPort` 配置为其他端口，并使用内网穿透工具将该端口映射到公网。在配置文件中的 `ServerIP` 中填写该端口映射的公网端口。
+
+## 🛠️ 管理员指令
+
+当遇到某些玩家因为使用了特殊网络加速器或复杂的多级代理，导致插件无法自动获取其真实 IP 时，您可以使用以下指令将其加入白名单：
+
+`/skipipcheck <玩家选择器> false`
+
+*   **功能**：强制跳过指定玩家的 IP 真实性检测，直接使用默认 IP 记录。
+*   **使用场景**：玩家反馈被误判、频繁掉线或触发反作弊警报，且确认其网络环境无恶意时。
+*   **参数说明**：`<玩家选择器>` 可以是玩家的游戏 ID（如 `Steve`）或 `@a`（所有人）、`@r`（随机一人）等选择器。
+*   **权限**：需要管理员权限（通常为 OP）才能在游戏内或控制台执行。
+
+## 🤝 兼容性说明
+
+`TrueIPGetter` 会修正IP获取方法中的IP字段。这意味着，后续加载的任何依赖玩家 IP 信息的模组（例如：登录鉴权插件、基于 IP 的权限控制系统、反作弊插件、IP 归属地查询插件等）在获取玩家信息时，拿到的都会是经过修正后的**真实公网 IP**。
+
+# 使用的开源项目
+| 项目            | 开源协议       | 链接                                      |
+|---------------|------------|-----------------------------------------|
+| nlohmann-json | MIT        | <https://github.com/nlohmann/json>      |
+| cpp-httplib   | MIT        | <https://github.com/yhirose/cpp-httplib>|
+| jwt-cpp       | MIT        | <https://github.com/Thalhammer/jwt-cpp> |
