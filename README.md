@@ -43,7 +43,7 @@
 *   仅在 `RamdomSecret` 设为 `false` 时生效。
 *   通常无需使用，直接使用默认的随机密钥`"RamdomSecret": true`即可。
 
-**`"ServerIP": "http://***REMOVED***"`**
+**`"ServerIP": "http://114.514.191.180"`**
 您的外部穿透服务器 IP 地址或绑定的域名。(需要有`http://`)
 *   这里需要填写公网可访问的IP地址(内网穿透商提供的IP)。
 
