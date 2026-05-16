@@ -17,8 +17,8 @@ void registerCommands() {
         .execute([](CommandOrigin const& origin, CommandOutput& output, SkipIpCheckOverload const& overload) {
             if (auto entity = overload.player.results(origin).data) {
                 try {
-                    for (auto en : *entity) {
-                        if (en) {
+                    for (const auto en : *entity) {
+                        if (en&&!en->isSimulatedPlayer()) {
                             auto uuid = en->getUuid().asString();
                             
                             if (overload.action) {
@@ -32,6 +32,9 @@ void registerCommands() {
                                 }
                                 output.success("成功取消玩家跳过IP验证");
                             }
+                        }
+                        else {
+                            output.error("玩家不存在或玩家是假人");
                         }
                     }
                 } catch (...) {

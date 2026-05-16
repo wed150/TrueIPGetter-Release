@@ -70,6 +70,7 @@ bool Entry::enable() {
     eventBus.emplaceListener<ll::event::PlayerJoinEvent>(
         [this](const ll::event::PlayerJoinEvent& event) {
             try {
+                if (event.self().isSimulatedPlayer()) return;
                 // Remove player from passed set on rejoin
                 passedPlayers.erase(event.self().getUuid());
                 

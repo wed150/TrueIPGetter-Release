@@ -28,7 +28,7 @@ LL_AUTO_TYPE_INSTANCE_HOOK(
     &Player::getIPAndPort,
     std::string
 ) {
-    if (this) {
+    if (this&&!this->isSimulatedPlayer()) {
         // Get player UUID
         const auto uuid = this->getUuid().asString();
         
@@ -66,25 +66,27 @@ LL_AUTO_TYPE_INSTANCE_HOOK(
     if (const auto networkHandlerOpt = ll::service::getServerNetworkHandler()) {
         // Get ServerPlayer and validate
         if (const auto* serverPlayer = networkHandlerOpt.value()._getServerPlayer(*this, SubClientId::PrimaryClient)) {
-            // Get player UUID
-            const auto uuid = serverPlayer->getUuid().asString();
-            
-            // Check if we have a custom IP for this player
-            if (ipDb && ipDb->has(uuid)) {
-                auto ipAndPort = origin();
-                const auto colonPos = ipAndPort.find(":");
-                std::string port = ":14514";
-                
-                // Extract port from original IP:Port string
-                if (colonPos != std::string::npos) {
-                    port = ipAndPort.substr(colonPos);
-                }
-                
-                const auto newIP = ipDb->get(uuid).value();
-                
-                // Return modified IP if it's not the default placeholder
-                if (newIP != "1.1.1.1") {
-                    return newIP + port;
+            if (!serverPlayer->isSimulatedPlayer()){
+                // Get player UUID
+                const auto uuid = serverPlayer->getUuid().asString();
+
+                // Check if we have a custom IP for this player
+                if (ipDb && ipDb->has(uuid)) {
+                    auto ipAndPort = origin();
+                    const auto colonPos = ipAndPort.find(":");
+                    std::string port = ":14514";
+
+                    // Extract port from original IP:Port string
+                    if (colonPos != std::string::npos) {
+                        port = ipAndPort.substr(colonPos);
+                    }
+
+                    const auto newIP = ipDb->get(uuid).value();
+
+                    // Return modified IP if it's not the default placeholder
+                    if (newIP != "1.1.1.1") {
+                        return newIP + port;
+                    }
                 }
             }
         }
@@ -101,15 +103,22 @@ LL_AUTO_TYPE_INSTANCE_HOOK(
     &NetworkIdentifier::getAddress,
     std::string,
 ) {
-    // Get player UUID from the network identifier
-    const auto uuid = ll::service::getServerNetworkHandler().value()
-                    ._getServerPlayer(*this, SubClientId::PrimaryClient)
-                    ->getUuid()
-                    .asString();
-    
-    // Check if we have a custom IP for this player
-    if (ipDb && ipDb->has(uuid)) {
-        return ipDb->get(uuid).value();
+
+    if (const auto networkHandlerOpt = ll::service::getServerNetworkHandler()) {
+        // Get ServerPlayer and validate
+        if (const auto* serverPlayer = networkHandlerOpt.value()._getServerPlayer(*this, SubClientId::PrimaryClient)) {
+            if (!serverPlayer->isSimulatedPlayer()){
+                // Get player UUID
+                const auto uuid = serverPlayer->getUuid().asString();
+                // Check if we have a custom IP for this player
+                if (ipDb && ipDb->has(uuid)) {
+                    // Return modified IP if it's not the default placeholder
+                    if (const auto newIP = ipDb->get(uuid).value(); newIP != "1.1.1.1") {
+                        return newIP;
+                    }
+                }
+            }
+        }
     }
     
     return origin();
