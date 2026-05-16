@@ -1,7 +1,7 @@
 #include "Jwt.h"
 
 
-namespace my_mod {
+namespace TrueIPGetter {
 
 // Static member initialization
 std::string JwtUtils::m_secret = "wed15";
@@ -38,4 +38,4 @@ const std::string& JwtUtils::getSecret() {
     return m_secret;
 }
 
-} // namespace my_mod
+} // namespace TrueIPGetter

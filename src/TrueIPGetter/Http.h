@@ -3,7 +3,7 @@
 #include "ll/api/thread/ThreadPoolExecutor.h"
 #include "httplib.h"
 
-namespace my_mod {
+namespace TrueIPGetter {
 
 /**
  * @brief Manages the HTTP server for IP reporting.
@@ -46,4 +46,4 @@ private:
     static std::optional<ll::thread::ThreadPoolExecutor> m_threadPool;
 };
 
-} // namespace my_mod
+} // namespace TrueIPGetter

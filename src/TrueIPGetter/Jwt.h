@@ -2,7 +2,7 @@
 
 #include "jwt-cpp/traits/nlohmann-json/defaults.h"
 
-namespace my_mod {
+namespace TrueIPGetter {
 
 /**
  * @brief Utility class for JWT token operations.
@@ -45,4 +45,4 @@ private:
     static std::string m_secret;
 };
 
-} // namespace my_mod
+} // namespace TrueIPGetter

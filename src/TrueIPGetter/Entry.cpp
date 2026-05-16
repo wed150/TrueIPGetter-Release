@@ -13,7 +13,7 @@
 #include "ll/api/mod/RegisterHelper.h"
 
 
-namespace my_mod {
+namespace TrueIPGetter {
 
     // Global variables for mod state
     std::set<mce::UUID> passedPlayers;  ///< Players who have passed IP verification
@@ -104,6 +104,6 @@ bool Entry::unload() {
     return true;
 }
 
-} // namespace my_mod
+} // namespace TrueIPGetter
 
-LL_REGISTER_MOD(my_mod::Entry, my_mod::Entry::getInstance());
+LL_REGISTER_MOD(TrueIPGetter::Entry, TrueIPGetter::Entry::getInstance());

@@ -12,7 +12,7 @@
 #include "ll/api/data/KeyValueDB.h"
 #include "ll/api/io/Logger.h"
 
-namespace my_mod {
+namespace TrueIPGetter {
 
 // External global variables from Entry.cpp
 extern std::set<mce::UUID> passedPlayers;
@@ -127,4 +127,4 @@ void uninstallHooks() {
     logger->debug("IP钩子已卸载");
 }
 
-} // namespace my_mod
+} // namespace TrueIPGetter

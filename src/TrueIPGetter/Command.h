@@ -3,7 +3,7 @@
 #include "ll/api/command/CommandHandle.h"
 
 
-namespace my_mod {
+namespace TrueIPGetter {
 
 /**
  * @brief Structure for the skipipcheck command overload parameters.
@@ -21,4 +21,4 @@ struct SkipIpCheckOverload {
  */
 void registerCommands();
 
-} // namespace my_mod
+} // namespace TrueIPGetter

@@ -2,7 +2,7 @@
 
 #include "mc/world/actor/player/Player.h"
 
-namespace my_mod {
+namespace TrueIPGetter {
 
 /**
  * @brief Sends an IP verification form to the player.
@@ -16,4 +16,4 @@ namespace my_mod {
  */
 void SendForm(Player& player, std::string token = "", bool warn = false);
 
-} // namespace my_mod
+} // namespace TrueIPGetter

@@ -3,7 +3,7 @@
 
 #include "ll/api/data/KeyValueDB.h"
 #include "mc/world/actor/player/Player.h"
-namespace my_mod {
+namespace TrueIPGetter {
 
 extern std::unique_ptr<ll::data::KeyValueDB> ipDb;
 
@@ -41,4 +41,4 @@ void registerCommands() {
         });
 }
 
-} // namespace my_mod
+} // namespace TrueIPGetter

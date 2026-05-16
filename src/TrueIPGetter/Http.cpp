@@ -14,7 +14,7 @@
 #include "ll/api/data/KeyValueDB.h"
 #include "ll/api/io/Logger.h"
 
-namespace my_mod {
+namespace TrueIPGetter {
 
 // Static member initialization
 httplib::Server HttpServerManager::m_server;
@@ -127,4 +127,4 @@ httplib::Server& HttpServerManager::getServer() {
     return m_server;
 }
 
-} // namespace my_mod
+} // namespace TrueIPGetter

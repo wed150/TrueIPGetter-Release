@@ -2,7 +2,7 @@
 
 #include "ll/api/mod/NativeMod.h"
 
-namespace my_mod {
+namespace TrueIPGetter {
 
 /**
  * @brief Main entry point for the TrueIPGetter mod.
@@ -69,4 +69,4 @@ private:
     ll::mod::NativeMod& mSelf;
 };
 
-} // namespace my_mod
+} // namespace TrueIPGetter

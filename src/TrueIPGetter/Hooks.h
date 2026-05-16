@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace my_mod {
+namespace TrueIPGetter {
 
 /**
  * @brief Installs all memory hooks for IP retrieval.
@@ -20,4 +20,4 @@ void installHooks();
  */
 void uninstallHooks();
 
-} // namespace my_mod
+} // namespace TrueIPGetter
